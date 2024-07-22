@@ -1,5 +1,5 @@
 #### Set the directory of the data file and load dependancies####
-dir <- "D:/Jonas/iFAST_DATA"
+dir <- "D:/User/iFAST_DATA"
 setwd(dir)
 
 library(ggplot2)
@@ -9,13 +9,9 @@ library(export)
 #### loading and processing dataset####
 data <- read.csv("data.csv") #load the csv file with the data 
 
-data$Dye <- as.factor(data$Dye)      #change "Strain", "Dye" and "Time" to factors as Rstudio will most likely load them in as a different format
+data$Dye <- as.factor(data$Dye)      #change "Strain", "Dye" and "Time" to factors
 data$Strain <- as.factor(data$Strain)
 data$Time <- as.factor(data$Time)
-
-head(data) #Check how the data look
-str(data)  #Check if all variable that 
-
 
 ##### making subset per dye #####
   #for each fluorogen make a separate dataset.
@@ -29,7 +25,7 @@ coral <- subset(data, Dye == "CORAL")
 
 ### Figures#####
   ### defining colour palette ###
-colours <- c("#05a8aa", "#bc412b") #this predifined list of colours will determine the colour assigned to the iFAST and the Wild-type strain
+colours <- c("#05a8aa", "#bc412b") #this predefined list of colours will determine the colour assigned to the iFAST and the Wild-type strain
 
 
 ### Lime #####
@@ -42,19 +38,19 @@ for (i in levels(lime$Time)){
   result <- t.test(Fold_change ~ Strain,data=set)$p.value
   print(result)
 } 
-  # This part of the code calculated the max Fold change value of each time point and stores it in. This will later be used when making the figures to display the significance
+  # This part of the code calculates and stores each time point's max Fold change value. This will later be used when making the figures to display the significance
 lime_max <- lime %>% 
   group_by(Time) %>%
   summarise(y_pos = max(Fold_change)+1) %>%
   pull(y_pos)
   # Following is the part of the code that makes and dispays the figure.
-ggplot(lime, aes( x = Time, y = Fold_change, fill = Strain)) + # Here the dataset is loaded in and the different variables are assigned to the correct axis.
+ggplot(lime, aes( x = Time, y = Fold_change, fill = Strain)) + # Here the dataset is loaded and the different variables are assigned to the correct axis.
       annotate("rect",xmin=1.5,xmax=5.5,ymin=-Inf,ymax=Inf,fill="#99ff94", alpha = 0.5)+ # This makes the green rectangle in the background.
       annotate('text', x= 2, y= 45, label = "Lime", fontface = 'bold')+ # Use this line to annotate the figure with the used fluorogen.
       geom_vline(xintercept = 1.5, linetype = 'dotted', color = 'black', linewidth = 0.75)+ # This line and the next are used to produce the dotted lines that demarcate the green rectangle 
       geom_vline(xintercept = 5.5, linetype = 'dotted', color = 'black', linewidth = 0.75)+
       geom_point(shape = 21, position = position_jitterdodge())+ # Here we plot all data points as dots 
-      geom_boxplot(position = position_dodge(0), alpha  = 0.75, outlier.shape = 21, outlier.alpha = 1) + # Here we make a boxplot that is semi-transparant
+      geom_boxplot(position = position_dodge(0), alpha  = 0.75, outlier.shape = 21, outlier.alpha = 1) + # Here we make a boxplot that is semi-transparent
       scale_x_discrete(name="Time (min)", limits = c('-5', '2', '5', '10', '15', '20', '25'), 
                        labels = c('-5' = '-5', '2' = '2','5' = '5','10' = '10','15' = '15','20' ='W1', '25' = 'W2'))+ # Use this line to adjust the labeling of the x-axis
       scale_fill_manual(values = colours)+ # 
@@ -77,12 +73,11 @@ ggplot(lime, aes( x = Time, y = Fold_change, fill = Strain)) + # Here the datase
            label = c("", "","***","***","***","***","***"),
            y = lime_max,
            size = 6)
- # export the file with the prefered width, height and resolution
+ # Export the file with the preferred width, height and resolution
 graph2png(file="Image.png", width = 6 , height = 4, dpi = 1200)
 
   
 ### Coral ####
-
 
 for (i in levels(coral$Time)){
   set <- subset(coral, Time == i)
