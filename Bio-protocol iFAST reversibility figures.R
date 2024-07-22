@@ -3,7 +3,7 @@ dir <- "D:/User/iFAST_DATA"
 setwd(dir)
 
 library(ggplot2)
-library(dplyr)
+library(stats)
 library(export)
 
 #### loading and processing dataset####
